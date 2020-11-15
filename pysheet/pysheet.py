@@ -93,10 +93,13 @@ class Cell():
         self.widget.select_range(0, tk.END)
 
     def update(self, event):
+        
         # get the value of this cell and put it in formula
         # calculate all dependencies
         # propogate to all dependecnies
-
+        self.formula = str(self.var.get())
+        self.calculate()
+        self.propagate()
         # If this was after pressing Return, keep showing the formula
         if hasattr(event, 'keysym') and event.keysym == "Return":
             self.var.set(self.formula)
