@@ -18,6 +18,7 @@ def cellname(col, row):
 
 class Cell():
     def __init__(self, row, col, siblings, parent):
+        #make instance variables from arguments
         self.row = row
         self.col = col
         self.name = cellname(col, row)
@@ -27,7 +28,8 @@ class Cell():
         self.value = 0
         self.formula = str(self.value)
 
-        self.depenencies = set()
+        #make set of dependencies and requirements
+        self.dependencies = set()
         self.requirements = set()
 
         # be happy you get this machinery for free.
@@ -88,8 +90,9 @@ class Cell():
             self.siblings[each].calculate()
             self.siblings[each].propogate()
 
-    def edit(self, event):
-        # make sure to update the cell with the formula
+    def edit(self,event):
+        #"clicking" on the cell, displays formula instead of value for editing
+        self.var.set(self.formula)
         self.widget.select_range(0, tk.END)
 
     def update(self, event):
