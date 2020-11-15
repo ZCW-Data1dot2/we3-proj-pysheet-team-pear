@@ -63,11 +63,11 @@ class Cell():
         currentreqs = set(cellre.findall(self.formula))
         # Add this cell to the new requirement's dependents
         # removing all the reqs that we might no longer need
-        for each in currentreqs - self.reqs:
-            my siblings[each].deps.add(self.name)
+        for each in currentreqs - self.requirements:
+            self.siblings[each].dependencies.add(self.name)
         # Add remove this cell from dependents no longer referenced
-        for each in self.reqs - currentreqs:
-            my siblings[each].deps.remove(self.name)
+        for each in self.requirements - currentreqs:
+            self.siblings[each].dependencies.remove(self.name)
         #
         # Look up the values of our required cells
         # reqvalues = a comprehension of r,
@@ -84,10 +84,9 @@ class Cell():
         self.var.set(self.value)
 
     def propagate(self):
-        pass
-        # for each of your deps
-        #     calculate
-        #     propogate
+        for each in self.depenencies:
+            self.siblings[each].calculate()
+            self.siblings[each].propogate()
 
     def edit(self, event):
         # make sure to update the cell with the formula
