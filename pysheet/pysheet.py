@@ -73,7 +73,7 @@ class Cell():
         #
         # Look up the values of our required cells
         # reqvalues = a comprehension of r,
-        reqvalues = {self.siblings[r].value for r in currentreqs}
+        reqvalues = {r : self.siblings[r].value for r in currentreqs}
         # Build an environment with these values and basic math functions
 
         environment = ChainMap(math.__dict__, reqvalues)
@@ -147,5 +147,6 @@ class SpreadSheet(tk.Frame):
 
 
 root = tk.Tk()
+root.title("Team Pear's Spreadsheet")
 app = SpreadSheet(Nrows, Ncols, master=root)
 app.mainloop()
