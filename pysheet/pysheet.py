@@ -12,15 +12,25 @@ cellre = re.compile(r'\b[A-Z][0-9]\b')
 
 
 def cellname(col, row):
-    # returns a string translates col 0, row 0 to 'A1'
-    # uses ascii to find letter equivalent to number
     return chr(ord('A')+col) + str(row+1)
+    # returns a string translates col 0, row 0 to 'A1'
+    # pass
 
 
 class Cell():
+    values = {}
     def __init__(self, row, col, siblings, parent):
+        # save off instance variables from arguments
+        # and also
+        #set name to cellname(i, j)
+        # set value of cell to zero
+        # set formula to a str(value)
+        # Set of Dependencies - must be updated if this cell changes
+        # make deps empty
+        # Set of Requirements - values required for this cell to calculate
+        # make reqs empty
         self.row = row
-        self.column = col
+        self.col = col
         self.name = cellname(col, row)
         self.siblings = siblings
         self.parent = parent
@@ -28,9 +38,8 @@ class Cell():
         self.value = 0
         self.formula = str(self.value)
 
-        self.depenencies = set()
+        self.dependencies = set()
         self.requirements = set()
-
         # be happy you get this machinery for free.
         self.var = tk.StringVar()
         entry = self.widget = tk.Entry(parent,
@@ -43,10 +52,9 @@ class Cell():
         entry.bind('<Down>', self.move(+1, 0))
         entry.bind('<Left>', self.move(0, -1))
         entry.bind('<Right>', self.move(0, 1))
-
+        self.var.set(self.value)
         # set this cell's var to cell's value
         # and you're done.
-        self.var.set(self.value)
 
     def move(self, rowadvance, coladvance):
         targetrow = (self.row + rowadvance) % Nrows
@@ -61,7 +69,7 @@ class Cell():
     def calculate(self):
         # find all the cells mentioned in the formula.
         #  put them all into a tmp set currentreqs
-        #  
+        #
         # Add this cell to the new requirement's dependents
         # removing all the reqs that we might no longer need
         # for each in currentreqs - self.reqs
@@ -69,20 +77,21 @@ class Cell():
         # Add remove this cell from dependents no longer referenced
         # for each in self.reqs - currentreqs:
         #    my siblings[r].deps.remove(self.name)
-        #  
+        #
         # Look up the values of our required cells
         # reqvalues = a comprehension of r, self.siblings[r].value for r in currentreqs
         # Build an environment with these values and basic math functions
-        
+
         environment = ChainMap(math.__dict__, reqvalues)
         # Note that eval is DANGEROUS and should not be used in production
         self.value = eval(self.formula, {}, environment)
 
         # save currentreqs in self.reqs
         # set this cell's var to cell's value
-        # 
+        #
 
     def propagate(self):
+
         pass
         # for each of your deps
         #     calculate
@@ -96,10 +105,23 @@ class Cell():
         # get the value of this cell and put it in formula
         # calculate all dependencies
         # propogate to all dependecnies
-
-        # If this was after pressing Return, keep showing the formula
+        l_formula = str(self.var.get())
+        if l_formula[0] == 'A' or l_formula[0] == 'B' or l_formula[0] == 'C' or l_formula[0] == 'D' or l_formula[0] == 'E':
+            cellname1 = l_formula[:2]
+            cellname2 = l_formula[3:5]
+            cell_operation = l_formula[2:3]
+            c = self.values[cellname1] + cell_operation + self.values[cellname2]
+            d = eval(c)
+            self.var.set(d)
+            self.values.update( {self.name : d} )
+            # pass
+        else:
+            self.formula = l_formula
+            self.values['self.name'] = int(l_formula)
+            self.values.update( { self.name : self.formula } )
         if hasattr(event, 'keysym') and event.keysym == "Return":
             self.var.set(self.formula)
+
 
     def save(self, filename):
         pass
