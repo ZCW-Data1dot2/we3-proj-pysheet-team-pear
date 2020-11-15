@@ -86,7 +86,7 @@ class Cell():
         self.var.set(self.value)
 
     def propagate(self):
-        for each in self.depenencies:
+        for each in self.dependencies:
             self.siblings[each].calculate()
             self.siblings[each].propogate()
 
